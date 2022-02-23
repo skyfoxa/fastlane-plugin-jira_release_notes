@@ -137,6 +137,7 @@ module Fastlane
                                        description: "Jira project version",
                                        optional: true,
                                        is_string: false,
+                                       default_value: "",
                                        verify_block: proc do |value|
                                          UI.user_error!("'version' value must be a String or Regexp! Found #{value.class} instead.") unless value.kind_of?(String) || value.kind_of?(Regexp)
                                          UI.user_error!("No Jira project version") if value.to_s.length == 0
