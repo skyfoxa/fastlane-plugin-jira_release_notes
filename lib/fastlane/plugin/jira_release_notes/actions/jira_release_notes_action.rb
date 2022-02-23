@@ -16,6 +16,7 @@ module Fastlane
         version = params[:version]
         project = params[:project]
         status = params[:status]
+        in_last_unreleased = params[:in_last_unreleased]
         components = params[:components]
         max_results = params[:max_results].to_i
         issues = []
@@ -23,20 +24,27 @@ module Fastlane
         UI.message("Fetch issues from JIRA project '#{project}', version '#{version}'")
 
         begin
-          if version.kind_of?(Regexp)
+          if in_last_unreleased
+            jql = "PROJECT = '#{project}' AND fixVersion in unreleasedVersions()"
+          elsif version.kind_of?(Regexp)
             versions = client.Project.find(project).versions
                              .select { |v| version.match(v.name) }
                              .map { |v| "'#{v.name}'" } .join(', ')
             jql = "PROJECT = '#{project}' AND fixVersion in (#{versions})"
-          else
+          unless version.nil? or version.empty?
             jql = "PROJECT = '#{project}' AND fixVersion = '#{version}'"
+          else
+            jql = "PROJECT = '#{project}'"
           end
+          
           unless status.nil? or status.empty?
-            jql += " AND status = '#{status}'"
+            jql += " AND status in (#{status}.map{|s| "\"#{s}\""}.join(", ")})"
           end
+          
           unless components.nil? or components.empty?
             jql += " AND component in (#{components.map{|s| "\"#{s}\""}.join(", ")})"
           end
+          
           UI.message("jql '#{jql}'")
           issues = client.Issue.jql(jql,max_results: max_results)
 
@@ -117,6 +125,13 @@ module Fastlane
                                        type: Array,
                                        sensitive: true,
                                        default_value: ""),
+           FastlaneCore::ConfigItem.new(key: :in_last_unreleased,
+                                         env_name: "IN_LAST_UNRELEASED",
+                                         description: "Fix version will be serched in last unreleased array and version field is ignored",
+                                         optional: true,
+                                         is_string: false,
+                                         default_value: false
+                                       ),
           FastlaneCore::ConfigItem.new(key: :version,
                                        env_name: "FL_JIRA_PROJECT_VERSION",
                                        description: "Jira project version",
