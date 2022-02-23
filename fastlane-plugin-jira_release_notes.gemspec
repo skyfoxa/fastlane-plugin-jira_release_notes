@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = 'izh.sever@gmail.com'
 
   spec.summary       = 'Release notes from JIRA for version'
-  spec.homepage      = "https://github.com/RedMadRobot/fastlane-plugin-jira_release_notes"
+  spec.homepage      = "https://github.com/skyfoxa/fastlane-plugin-jira_release_notes"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
