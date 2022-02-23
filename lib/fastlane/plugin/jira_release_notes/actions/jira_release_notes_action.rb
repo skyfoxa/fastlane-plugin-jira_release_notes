@@ -17,6 +17,7 @@ module Fastlane
         project = params[:project]
         status = params[:status]
         in_last_unreleased = params[:in_last_unreleased]
+        in_open_sprint = params[:in_open_sprint]
         components = params[:components]
         max_results = params[:max_results].to_i
         issues = []
@@ -43,6 +44,10 @@ module Fastlane
           
           unless components.nil? or components.empty?
             jql += " AND component in (#{components.map{|s| "\"#{s}\""}.join(", ")})"
+          end
+          
+          if in_open_sprint
+            jql += " AND sprint in openSprints()"
           end
           
           UI.message("jql '#{jql}'")
@@ -128,6 +133,13 @@ module Fastlane
            FastlaneCore::ConfigItem.new(key: :in_last_unreleased,
                                          env_name: "FL_IN_LAST_UNRELEASED",
                                          description: "Fix version will be serched in last unreleased array and version field is ignored",
+                                         optional: true,
+                                         is_string: false,
+                                         default_value: false
+                                       ),
+           FastlaneCore::ConfigItem.new(key: :in_open_sprint,
+                                         env_name: "FL_IN_OPEN_SPRINT",
+                                         description: "Returns only issues that are in current open sprint",
                                          optional: true,
                                          is_string: false,
                                          default_value: false
