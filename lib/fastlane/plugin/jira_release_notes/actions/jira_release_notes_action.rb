@@ -22,9 +22,8 @@ module Fastlane
         issues = []
 
         UI.message("Fetch issues from JIRA project '#{project}', version '#{version}'")
-
         begin
-          UI.message("CUSTOM OUTPUT")
+          
           if in_last_unreleased
             jql = "PROJECT = '#{project}' AND fixVersion in unreleasedVersions()"
           elsif version.kind_of?(Regexp)
@@ -32,14 +31,14 @@ module Fastlane
                              .select { |v| version.match(v.name) }
                              .map { |v| "'#{v.name}'" } .join(', ')
             jql = "PROJECT = '#{project}' AND fixVersion in (#{versions})"
-          unless version.nil? or version.empty?
+          elsif !(version.nil? or version.empty?)
             jql = "PROJECT = '#{project}' AND fixVersion = '#{version}'"
           else
             jql = "PROJECT = '#{project}'"
           end
           
           unless status.nil? or status.empty?
-            jql += " AND status in (#{status}.map{|s| "\"#{s}\""}.join(", ")})"
+            jql += " AND status in (#{status})"
           end
           
           unless components.nil? or components.empty?
@@ -141,7 +140,6 @@ module Fastlane
                                        default_value: "",
                                        verify_block: proc do |value|
                                          UI.user_error!("'version' value must be a String or Regexp! Found #{value.class} instead.") unless value.kind_of?(String) || value.kind_of?(Regexp)
-                                         UI.user_error!("No Jira project version") if value.to_s.length == 0
                                        end),
           FastlaneCore::ConfigItem.new(key: :format,
                                        env_name: "FL_JIRA_RELEASE_NOTES_FORMAT",
