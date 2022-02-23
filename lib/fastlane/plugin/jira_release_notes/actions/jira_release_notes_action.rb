@@ -126,7 +126,7 @@ module Fastlane
                                        sensitive: true,
                                        default_value: ""),
            FastlaneCore::ConfigItem.new(key: :in_last_unreleased,
-                                         env_name: "IN_LAST_UNRELEASED",
+                                         env_name: "FL_IN_LAST_UNRELEASED",
                                          description: "Fix version will be serched in last unreleased array and version field is ignored",
                                          optional: true,
                                          is_string: false,
@@ -135,7 +135,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :version,
                                        env_name: "FL_JIRA_PROJECT_VERSION",
                                        description: "Jira project version",
-                                       sensitive: true,
+                                       optional: true,
                                        is_string: false,
                                        verify_block: proc do |value|
                                          UI.user_error!("'version' value must be a String or Regexp! Found #{value.class} instead.") unless value.kind_of?(String) || value.kind_of?(Regexp)
