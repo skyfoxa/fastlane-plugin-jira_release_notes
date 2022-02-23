@@ -24,6 +24,7 @@ module Fastlane
         UI.message("Fetch issues from JIRA project '#{project}', version '#{version}'")
 
         begin
+          UI.message("CUSTOM OUTPUT")
           if in_last_unreleased
             jql = "PROJECT = '#{project}' AND fixVersion in unreleasedVersions()"
           elsif version.kind_of?(Regexp)
